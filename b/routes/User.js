@@ -2,7 +2,12 @@ const express = require("express");
 const router = express.Router();
 const { check } = require("express-validator");
 
-const { signup, signin, signout } = require("../controllers/user");
+const {
+	signup,
+	signin,
+	signout,
+	confirmationPost,
+} = require("../controllers/User");
 
 router.post(
 	"/signup",
@@ -26,5 +31,9 @@ router.post(
 );
 
 router.get("/signout", signout);
+
+//Token
+router.post("/confirmation", confirmationPost);
+//router.post("/resend", resendTokenPost);
 
 module.exports = router;
