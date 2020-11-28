@@ -3,10 +3,17 @@ const { body, validationResult } = require("express-validator");
 var jwt = require("jsonwebtoken");
 var expressJwt = require("express-jwt");
 const bcrypt = require("bcrypt");
-const user = require("../models/User");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
 const TokenS = require("../models/Token");
+
+const transporter = nodemailer.createTransport({
+	service: "gmail",
+	auth: {
+		user: "2gi19cs140@students.git.edu",
+		pass: "hupfwsmwznwchtsf",
+	},
+});
 
 exports.signup = (req, res) => {
 	const errors = validationResult(req);
@@ -20,47 +27,28 @@ exports.signup = (req, res) => {
 	const name = req.body.name;
 	const email = req.body.email;
 	const pass = req.body.password;
+
 	bcrypt.hash(pass, 10, (err, hash) => {
 		const user = new User({
 			name: name,
 			email: email,
 			password: hash,
 		});
+
 		user.save((err, user) => {
 			if (err) {
 				return res.status(400).json({
 					err: "NOT able to save user in DB",
 				});
 			}
-			res.json({
-				name: user.name,
-				email: user.email,
-				id: user._id,
-			});
+			console.log(`user ${user.email} created`);
+			sendMail(user, transporter, res);
 		});
 	});
-	const tokenS = new TokenS({
-		userId: user._id,
-		token: crypto.randomBytes(16).toString("hex"),
-	});
-	console.log(tokenS);
-	tokenS.save((err, response) => {
-		if (err) {
-			res.status(422).json({
-				err: "NOT able to save token",
-			});
-		}
-		res.json(response);
-	});
+	// console.log(tokenS.token);
+};
 
-	var transporter = nodemailer.createTransport({
-		service: "Sendgrid",
-		auth: {
-			user: process.env.SENDGRID_USERNAME,
-			pass: process.env.SENDGRID_PASSWORD,
-		},
-	});
-	console.log(TokenS.token);
+const sendMail = (user, tran, res) => {
 	var mailOptions = {
 		from: "shreyxs@gmail.com",
 		to: user.email,
@@ -70,17 +58,35 @@ exports.signup = (req, res) => {
 			"Please verify your account by clicking the link: \nhttp://" +
 			"localhost:2020" +
 			"/confirmation/" +
-			TokenS.token +
-			".\n",
+			createToken(user.id) +
+			"\n",
 	};
-	transporter.sendMail(mailOptions, function (err) {
+	tran.sendMail(mailOptions, function (err, msg) {
 		if (err) {
-			return res.status(500).send({ msg: err.message });
+			console.log("send mail error -", err.message);
+			res.status(500).json({ msg: err.message });
+			return;
+		} else {
+			res.status(200).json(user);
+			console.log(`Everything done - welcome ${user.name}!`);
+			return;
 		}
-		res
-			.status(200)
-			.send("A verification email has been sent to " + user.email + ".");
 	});
+};
+
+const createToken = userID => {
+	const tokenS = new TokenS({
+		userId: userID,
+		token: crypto.randomBytes(16).toString("hex"),
+	});
+	console.log("created token -", tokenS);
+	tokenS.save((err, response) => {
+		if (err) {
+			console.log("unable to save token in db.");
+			return;
+		}
+	});
+	return tokenS.token;
 };
 
 exports.confirmationPost = (req, res, next) => {
