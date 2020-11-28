@@ -19,19 +19,22 @@ class Signup extends Component {
 
 	onSubmitSignUp = ev => {
 		ev.preventDefault();
-		fetch(`${process.env.BACKEND}/signup`, {
+		fetch("http://localhost:2020/signup", {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({
 				email: this.state.signInEmail,
 				password: this.state.signInPassword,
 				name: this.state.name,
-				username: this.state.username,
+				// username: this.state.username,
 			}),
 		})
 			.then(resp => resp.json())
 			.then(data => {
-				if (data.id) this.setState({ data });
+				if (data.id) {
+					this.setState({ data });
+					console.log(data);
+				}
 			});
 	};
 	render() {
