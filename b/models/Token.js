@@ -4,7 +4,6 @@ const { ObjectId } = mongoose.Schema;
 const tokenSchema = new mongoose.Schema({
 	userId: {
 		type: ObjectId,
-		required: true,
 		ref: "User",
 	},
 	token: {
