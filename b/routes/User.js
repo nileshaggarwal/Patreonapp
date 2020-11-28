@@ -33,7 +33,7 @@ router.post(
 router.get("/signout", signout);
 
 //Token
-router.post("/confirmation", confirmationPost);
+router.get("/confirmation", confirmationPost);
 //router.post("/resend", resendTokenPost);
 
 module.exports = router;

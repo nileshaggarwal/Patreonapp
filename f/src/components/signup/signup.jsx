@@ -30,8 +30,9 @@ class Signup extends Component {
 			}),
 		})
 			.then(resp => resp.json())
+			.catch(console.log)
 			.then(data => {
-				if (data.id) {
+				if (data._id) {
 					this.setState({ data });
 					console.log(data);
 				}
