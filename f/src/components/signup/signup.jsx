@@ -12,31 +12,39 @@ class Signup extends Component {
 		};
 	}
 
-	onEmailChange = e => this.setState({ email: e.target.value });
-	onPasswordChange = e => this.setState({ password: e.target.value });
-	onNameChange = e => this.setState({ name: e.target.value });
-	onUsernameChange = e => this.setState({ username: e.target.value });
+	onEmailChange = e => {
+		this.setState({ email: e.target.value });
+	};
+	onPasswordChange = e => {
+		this.setState({ password: e.target.value });
+	};
+	onNameChange = e => {
+		this.setState({ name: e.target.value });
+	};
+	onUsernameChange = e => {
+		this.setState({ username: e.target.value });
+	};
 
 	onSubmitSignUp = ev => {
 		ev.preventDefault();
+		const data = {
+			name: this.state.name,
+			email: this.state.email,
+			password: this.state.password,
+		};
 		fetch("http://localhost:2020/signup", {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({
-				email: this.state.signInEmail,
-				password: this.state.signInPassword,
-				name: this.state.name,
-				// username: this.state.username,
-			}),
+			body: JSON.stringify(data),
 		})
-			.then(resp => resp.json())
-			.catch(console.log)
-			.then(data => {
-				if (data._id) {
-					this.setState({ data });
-					console.log(data);
-				}
-			});
+			.then(resp => {
+				resp.json();
+			})
+			.then(response => {
+				this.setState({ data });
+				console.log(this.state.data);
+			})
+			.catch(console.log);
 	};
 	render() {
 		return (
