@@ -27,23 +27,17 @@ class Signup extends Component {
 
 	onSubmitSignUp = ev => {
 		ev.preventDefault();
-		const data = {
-			name: this.state.name,
-			email: this.state.email,
-			password: this.state.password,
-		};
 		fetch("http://localhost:2020/signup", {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify(data),
+			body: JSON.stringify({
+				name: this.state.name,
+				email: this.state.email,
+				password: this.state.password,
+			}),
 		})
-			.then(resp => {
-				resp.json();
-			})
-			.then(response => {
-				this.setState({ data });
-				console.log(this.state.data);
-			})
+			.then(resp => resp.json())
+			.then(data => this.setState({ data }))
 			.catch(console.log);
 	};
 	render() {

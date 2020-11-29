@@ -9,6 +9,8 @@ const {
 	confirmationPost,
 } = require("../controllers/User");
 
+const { savePatreons } = require("../controllers/patreonData");
+
 router.post(
 	"/signup",
 	[
@@ -35,5 +37,7 @@ router.get("/signout", signout);
 //Token
 router.get("/confirmation", confirmationPost);
 //router.post("/resend", resendTokenPost);
+
+router.get("/getPatrons", savePatreons);
 
 module.exports = router;

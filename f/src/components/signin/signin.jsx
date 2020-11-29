@@ -24,15 +24,14 @@ class Signin extends Component {
 			}),
 		})
 			.then(resp => resp.json())
-			.then(data => {
-				if (data.id) this.setState({ data });
-			});
+			.then(data => this.setState({ data }))
+			.catch(console.log);
 	};
 	render() {
 		return (
 			<>
-				{this.state.data.name ? (
-					`HI, ${this.state.data.name}!`
+				{this.state.data.user ? (
+					`HI, ${this.state.data.user.name}!`
 				) : (
 					<>
 						<label htmlFor="email-address">Email</label>

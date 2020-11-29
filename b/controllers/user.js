@@ -104,7 +104,7 @@ exports.confirmationPost = (req, res, next) => {
 				msg:
 					"We were unable to find a valid token. Your token my have expired.",
 			});
-		console.log(token);
+
 		// If we found a token, find a matching user
 		User.findOne({ _id: token.userId }, function (e, user) {
 			if (!user)
@@ -160,11 +160,11 @@ exports.signin = (req, res) => {
 			const token = jwt.sign({ _id: user._id }, process.env.SECRET);
 
 			//put token in cookie
-			res.cookie("token", token, { expire: new Date() + 99 });
+			res.cookie("token", token, { expire: new Date() + 14 });
 
 			//send response  to frontend
-			const { _id, name, email, role } = user;
-			return res.json({ token, user: { _id, name, email } });
+			console.log(`${user.name} signed in.`);
+			return res.json({ token, user });
 		});
 	});
 };
