@@ -74,7 +74,7 @@ const sendMail = (user, tran, res) => {
 	});
 };
 
-const createToken = (userID) => {
+const createToken = userID => {
 	const tokenS = new TokenS({
 		userId: userID,
 		token: crypto.randomBytes(16).toString("hex"),
@@ -174,21 +174,4 @@ exports.signout = (req, res) => {
 	res.json({
 		message: "User signout successfully",
 	});
-};
-
-exports.isSignedIn = expressJwt({
-	secret: process.env.SECRET,
-	userProperty: "auth",
-	algorithms: ["RS256"],
-});
-
-//custom middlewares
-exports.isAuthenticated = (req, res, next) => {
-	let checker = req.profile && req.auth && req.profile._id == req.auth._id;
-	if (!checker) {
-		return res.status(403).json({
-			error: "ACCESS DENIED",
-		});
-	}
-	next();
 };
