@@ -149,11 +149,15 @@ exports.signin = (req, res) => {
 		}
 
 		bcrypt.compare(password, user.password, function (er, result) {
-			if (er) console.log(er);
+			if (er) {
+				console.log(er);
+				res.json("wrong password");
+			}
 			if (!result) {
 				res.status(401).json({
 					error: "Email and password do not match",
 				});
+				return;
 			}
 
 			//create token
@@ -164,12 +168,16 @@ exports.signin = (req, res) => {
 
 			//send response  to frontend
 			console.log(`${user.name} signed in.`);
+			req.app.locals.email = user.email;
+			console.log(req.app.locals.email);
 			return res.json({ token, user });
 		});
 	});
 };
 
 exports.signout = (req, res) => {
+	delete req.app.locals.email;
+	console.log(req.app.locals.email);
 	res.clearCookie("token");
 	res.json({
 		message: "User signout successfully",

@@ -6,6 +6,7 @@ const app = express();
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
+var session = require("express-session");
 
 //My routes
 const userRoutes = require("./routes/User");
@@ -25,6 +26,14 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(cors());
+app.use(
+	session({
+		secret: "keyboard cat",
+		resave: false,
+		saveUninitialized: true,
+		cookie: { secure: true },
+	})
+);
 
 //My Routes
 app.use("/", userRoutes);
