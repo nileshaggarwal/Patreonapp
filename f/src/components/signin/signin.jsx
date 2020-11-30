@@ -31,7 +31,11 @@ class Signin extends Component {
 		return (
 			<>
 				{this.state.data.user ? (
-					`HI, ${this.state.data.user.name}!`
+					<>
+						<a href="http://localhost:2020/patreon-link">
+							Link patreon account
+						</a>
+					</>
 				) : (
 					<>
 						<label htmlFor="email-address">Email</label>
