@@ -60,4 +60,5 @@ exports.loginButtonClicked = (req, res) => {
 	res.redirect(
 		`https://www.patreon.com/oauth2/authorize?response_type=code&client_id=${process.env.CLIENT_ID}&redirect_uri=${redirectURL}&state=${req.app.locals.email}`
 	);
+	delete req.app.locals.email;
 };
