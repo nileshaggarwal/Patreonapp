@@ -13,12 +13,13 @@ exports.savePatreons = (req, res) => {
 				const user_id = i.patron.id;
 				const user_name = i.patron.full_name;
 				const user_email = i.patron.email;
-				const tier = i.amount_cents === 300 ? "BASIC" : "PRO";
+				const tier = i.amount_cents;
 				patrons.push({ user_id, tier, user_name, user_email });
 			}
 			res.json(patrons);
 		})
 		.catch(err => {
 			console.error("Error fetching pledges:", err);
+			res.status(400);
 		});
 };

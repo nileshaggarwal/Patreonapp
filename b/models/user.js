@@ -31,8 +31,8 @@ const userSchema = new mongoose.Schema(
 			contentType: String,
 		},
 		patreonTier: {
-			type: Boolean,
-			default: false,
+			type: Number,
+			default: 0,
 		},
 	},
 	{ timestamps: true }
