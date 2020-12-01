@@ -3,7 +3,7 @@ const multer = require("multer");
 const GridFsStorage = require("multer-gridfs-storage");
 
 var storage = new GridFsStorage({
-	url: "process.env.DATABASE",
+	url: process.env.DATABASE,
 	options: { useNewUrlParser: true, useUnifiedTopology: true },
 	file: (req, file) => {
 		const match = ["image/png", "image/jpeg"];
