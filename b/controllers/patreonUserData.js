@@ -17,6 +17,7 @@ exports.handleOAuthRedirectRequest = (request, response) => {
 	patreonOAuthClient
 		.getTokens(oauthGrantCode, redirectURL)
 		.then(function (tokensResponse) {
+			console.log("jaiteh-", tokensResponse.access_token);
 			var patreonAPIClient = patreonAPI(tokensResponse.access_token);
 			return patreonAPIClient("/current_user");
 		})
