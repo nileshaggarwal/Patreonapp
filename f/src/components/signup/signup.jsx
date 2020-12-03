@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import { signup, authenticate, isAuthenticated } from "../../auth";
+import { Redirect } from "react-router-dom";
 
 class Signup extends Component {
 	constructor(props) {
@@ -26,66 +28,70 @@ class Signup extends Component {
 	};
 
 	onSubmitSignUp = ev => {
+		this.setState({ ...this.state, error: false, loading: true });
 		ev.preventDefault();
-		fetch("http://localhost:2020/signup", {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({
-				name: this.state.name,
-				email: this.state.email,
-				password: this.state.password,
-			}),
-		})
-			.then(resp => resp.json())
-			.then(data => this.setState({ data }))
-			.catch(console.log);
+		const { name, email, password } = this.state;
+		signup({ name, email, password })
+			.then(data => {
+				console.log("yeyle-", data);
+				if (data.error) {
+					this.setState({ ...this.state, error: data.error, loading: false });
+				} else {
+					authenticate(data, () => {
+						this.setState({ didRedirect: true });
+					});
+				}
+			})
+			.catch(error => this.setState({ error, loading: false }));
 	};
+
+	performRedirect = () => {
+		console.log("called w ", isAuthenticated().user);
+		if (isAuthenticated().user) return <Redirect to="/" />;
+	};
+
+	loadingMessage = () => this.state.loading && <h2>Loading...</h2>;
+
+	errorMessage = () => (
+		<div style={{ display: this.state.error ? "" : "none" }}>
+			{this.state.error}
+		</div>
+	);
+
 	render() {
 		return (
 			<>
-				{this.state.data.name ? (
-					`HI ${this.state.data.name}, go to signin!`
-				) : (
-					<>
-						<label htmlFor="username">Username</label>
-						<input
-							onChange={this.onUsernameChange}
-							type="text"
-							name="username"
-							id="username"
-						/>
-						<br />
-						<label htmlFor="name">Name</label>
-						<input
-							onChange={this.onNameChange}
-							type="text"
-							name="name"
-							id="name"
-						/>
-						<br />
-						<label htmlFor="email-address">Email</label>
-						<input
-							onChange={this.onEmailChange}
-							type="text"
-							name="email"
-							id="email-address"
-						/>
-						<br />
-						<label htmlFor="password">Password</label>
-						<input
-							onChange={this.onPasswordChange}
-							type="password"
-							name="password"
-							id="password"
-						/>
-						<br />
-						<input
-							onClick={this.onSubmitSignUp}
-							type="submit"
-							value="Sign Up!"
-						/>
-					</>
-				)}
+				{this.loadingMessage()}
+				{this.errorMessage()}
+				<label htmlFor="username">Username</label>
+				<input
+					onChange={this.onUsernameChange}
+					type="text"
+					name="username"
+					id="username"
+				/>
+				<br />
+				<label htmlFor="name">Name</label>
+				<input onChange={this.onNameChange} type="text" name="name" id="name" />
+				<br />
+				<label htmlFor="email-address">Email</label>
+				<input
+					onChange={this.onEmailChange}
+					type="text"
+					name="email"
+					id="email-address"
+				/>
+				<br />
+				<label htmlFor="password">Password</label>
+				<input
+					onChange={this.onPasswordChange}
+					type="password"
+					name="password"
+					id="password"
+				/>
+				<br />
+				<input onClick={this.onSubmitSignUp} type="submit" value="Sign Up!" />
+				{this.performRedirect()}
 			</>
 		);
 	}

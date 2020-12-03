@@ -8,16 +8,13 @@ exports.savePatreons = (req, res) => {
 			console.log(e);
 			return;
 		}
-		console.log("acc", tok.refresh_token, tok.access_token);
 		fetch(
 			`https://www.patreon.com/api/oauth2/token?grant_type=refresh_token&refresh_token=${tok.refresh_token}&client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}`,
 			{ method: "POST" }
 		)
 			.then(toke => toke.json())
 			.then(tokens => {
-				console.log("tresp", tokens);
 				const { access_token, refresh_token } = tokens;
-				console.log("new-", access_token, refresh_token);
 				const patreonAPIClient = patreonAPI(access_token);
 				var patrons = [];
 				patreonAPIClient(

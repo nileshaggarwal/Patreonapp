@@ -28,27 +28,31 @@ exports.signup = (req, res) => {
 	const email = req.body.email;
 	const pass = req.body.password;
 
-	bcrypt.hash(pass, 10, (err, hash) => {
+	bcrypt.hash(pass, 8, (err, hash) => {
 		const user = new User({
 			name: name,
 			email: email,
 			password: hash,
 		});
 
-		user.save((err, user) => {
-			if (err) {
+		user.save((er, u) => {
+			if (er) {
 				return res.status(400).json({
 					err: "NOT able to save user in DB",
 				});
 			}
-			console.log(`user ${user.email} created`);
-			sendMail(user, transporter, res);
+			console.log(`user ${u.email} created`);
+			const token = jwt.sign({ _id: user._id }, process.env.SECRET);
+			res.cookie("token", token, { expire: new Date() + 14 });
+			req.app.locals.email = user.email;
+			console.log(`${req.app.locals.email} signed in.`);
+			res.json({ token, user });
+			sendMail(u);
 		});
 	});
-	// console.log(tokenS.token);
 };
 
-const sendMail = (user, tran, res) => {
+const sendMail = user => {
 	var mailOptions = {
 		from: "shreyxs@gmail.com",
 		to: user.email,
@@ -61,15 +65,11 @@ const sendMail = (user, tran, res) => {
 			createToken(user.id) +
 			"\n",
 	};
-	tran.sendMail(mailOptions, function (err, msg) {
+	transporter.sendMail(mailOptions, function (err, msg) {
 		if (err) {
 			console.log("send mail error -", err.message);
-			res.status(500).json({ msg: err.message });
-			return;
 		} else {
-			res.status(200).json(user);
-			console.log(`Everything done - welcome ${user.name}!`);
-			return;
+			console.log(`sent email to ${user.email} sucessfully.`);
 		}
 	});
 };
@@ -79,7 +79,6 @@ const createToken = userID => {
 		userId: userID,
 		token: crypto.randomBytes(16).toString("hex"),
 	});
-	console.log("created token -", tokenS);
 	tokenS.save((err, response) => {
 		if (err) {
 			console.log("unable to save token in db.");
@@ -167,19 +166,18 @@ exports.signin = (req, res) => {
 			res.cookie("token", token, { expire: new Date() + 14 });
 
 			//send response  to frontend
-			console.log(`${user.name} signed in.`);
 			req.app.locals.email = user.email;
-			console.log(req.app.locals.email);
+			console.log(`${req.app.locals.email} signed in.`);
 			return res.json({ token, user });
 		});
 	});
 };
 
 exports.signout = (req, res) => {
-	delete req.app.locals.email;
-	console.log(req.app.locals.email);
 	res.clearCookie("token");
 	res.json({
-		message: "User signout successfully",
+		message: `${req.app.locals.email} signed out.`,
 	});
+	console.log(`${req.app.locals.email} signed out.`);
+	delete req.app.locals.email;
 };
