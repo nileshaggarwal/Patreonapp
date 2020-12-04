@@ -44,8 +44,6 @@ exports.signup = (req, res) => {
 			console.log(`user ${u.email} created`);
 			const token = jwt.sign({ _id: user._id }, process.env.SECRET);
 			res.cookie("token", token, { expire: new Date() + 14 });
-			req.app.locals.email = user.email;
-			console.log(`${req.app.locals.email} signed in.`);
 			res.json({ token, user });
 			sendMail(u);
 		});
@@ -121,7 +119,7 @@ exports.confirmationPost = (req, res, next) => {
 			console.log(`${user.name} - Verified.`);
 			user.save(function (err) {
 				if (err) {
-					return res.status(500).send({ msg: err.message });
+					return res.status(500).send({ error: err.message });
 				}
 				res.status(200).send("The account has been verified. Please log in.");
 			});
@@ -150,7 +148,9 @@ exports.signin = (req, res) => {
 		bcrypt.compare(password, user.password, function (er, result) {
 			if (er) {
 				console.log(er);
-				res.json("wrong password");
+				res.json({
+					error: "Email and password do not match",
+				});
 			}
 			if (!result) {
 				res.status(401).json({
@@ -162,12 +162,7 @@ exports.signin = (req, res) => {
 			//create token
 			const token = jwt.sign({ _id: user._id }, process.env.SECRET);
 
-			//put token in cookie
-			res.cookie("token", token, { expire: new Date() + 14 });
-
 			//send response  to frontend
-			req.app.locals.email = user.email;
-			console.log(`${req.app.locals.email} signed in.`);
 			return res.json({ token, user });
 		});
 	});
@@ -175,9 +170,5 @@ exports.signin = (req, res) => {
 
 exports.signout = (req, res) => {
 	res.clearCookie("token");
-	res.json({
-		message: `${req.app.locals.email} signed out.`,
-	});
-	console.log(`${req.app.locals.email} signed out.`);
-	delete req.app.locals.email;
+	res.status(200);
 };

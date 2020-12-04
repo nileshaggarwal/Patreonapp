@@ -29,10 +29,23 @@ export const signin = user => {
 };
 
 export const authenticate = (data, next) => {
-	console.log("authen w", data);
+	Object.assign(data.user, { xp: Date.now() + 64800000 }); //18 hours
 	if (typeof window !== "undefined") {
 		localStorage.setItem("jwt", JSON.stringify(data));
 		next();
+	}
+};
+
+export const isAuthenticated = () => {
+	if (typeof window == "undefined") {
+		return false;
+	}
+	if (localStorage.getItem("jwt")) {
+		const data = JSON.parse(localStorage.getItem("jwt"));
+		if (data.user.xp <= Date.now()) localStorage.removeItem("jwt");
+		else return data;
+	} else {
+		return false;
 	}
 };
 
@@ -43,15 +56,4 @@ export const signout = next => {
 	}
 
 	return fetch(`${API}/signout`);
-};
-
-export const isAuthenticated = () => {
-	if (typeof window == "undefined") {
-		return false;
-	}
-	if (localStorage.getItem("jwt")) {
-		return JSON.parse(localStorage.getItem("jwt"));
-	} else {
-		return false;
-	}
 };
