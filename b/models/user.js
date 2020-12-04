@@ -34,6 +34,11 @@ const userSchema = new mongoose.Schema(
 			type: Number,
 			default: 0,
 		},
+		patreon_refresh_token: {
+			type: String,
+			required: true,
+			default: "Not linked",
+		},
 	},
 	{ timestamps: true }
 );

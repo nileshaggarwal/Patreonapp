@@ -48,4 +48,6 @@ router.get("/patreon-link", loginButtonClicked);
 
 router.get("/oauth/redirect", handleOAuthRedirectRequest);
 
+router.get("/getTier", (req, res) => res.json(req.app.locals.tier));
+
 module.exports = router;

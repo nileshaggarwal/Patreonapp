@@ -29,10 +29,10 @@ exports.savePatreons = (req, res) => {
 							const tier = i.amount_cents;
 							patrons.push({ user_id, tier, user_name, user_email });
 						}
-						res.json(patrons);
 						tok.access_token = access_token;
 						tok.refresh_token = refresh_token;
 						tok.save();
+						res.json(patrons);
 					})
 					.catch(err => {
 						console.error("Error fetching pledges:", err);
