@@ -44,8 +44,6 @@ exports.signup = (req, res) => {
 			console.log(`user ${u.email} created`);
 			const token = jwt.sign({ _id: user._id }, process.env.SECRET);
 			res.cookie("token", token, { expire: new Date() + 14 });
-			req.app.locals._id = user._id;
-			console.log(`${req.app.locals._id} signed in.`);
 			res.json({ token, user });
 			sendMail(u);
 		});
@@ -165,8 +163,6 @@ exports.signin = (req, res) => {
 			const token = jwt.sign({ _id: user._id }, process.env.SECRET);
 
 			//send response  to frontend
-			req.app.locals._id = user._id;
-			console.log(`${req.app.locals._id} signed in.`);
 			return res.json({ token, user });
 		});
 	});
@@ -174,9 +170,5 @@ exports.signin = (req, res) => {
 
 exports.signout = (req, res) => {
 	res.clearCookie("token");
-	res.json({
-		message: `${req.app.locals._id} signed out.`,
-	});
-	console.log(`${req.app.locals._id} signed out.`);
-	delete req.app.locals;
+	res.status(200);
 };

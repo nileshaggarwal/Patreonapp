@@ -33,7 +33,6 @@ class Signup extends Component {
 		const { name, email, password } = this.state;
 		signup({ name, email, password })
 			.then(data => {
-				console.log("yeyle-", data);
 				if (data.error) {
 					this.setState({ ...this.state, error: data.error, loading: false });
 				} else {
@@ -42,11 +41,13 @@ class Signup extends Component {
 					});
 				}
 			})
-			.catch(error => this.setState({ error, loading: false }));
+			.catch(error => {
+				this.setState({ loading: false });
+				console.log(error);
+			});
 	};
 
 	performRedirect = () => {
-		console.log("called w ", isAuthenticated().user);
 		if (isAuthenticated().user) return <Redirect to="/" />;
 	};
 

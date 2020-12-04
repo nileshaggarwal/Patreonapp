@@ -28,7 +28,10 @@ class Signin extends Component {
 					});
 				}
 			})
-			.catch(error => this.setState({ error, loading: false }));
+			.catch(error => {
+				console.log(error);
+				this.setState({ loading: false });
+			});
 	};
 
 	performRedirect = () => {

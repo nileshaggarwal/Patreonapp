@@ -1,6 +1,21 @@
 const express = require("express");
 const router = express.Router();
 const { check } = require("express-validator");
+var jwt = require("jsonwebtoken");
+
+const verifyJWT = (req, res, next) => {
+	const token = req.headers["x-access-token"];
+	if (!token) res.send("not authenticated");
+	else
+		jwt.verify(token, process.env.SECRET, (er, decoded) => {
+			if (er)
+				res.json({
+					error: "Not authenticated",
+				});
+			else req.userID = decoded._id;
+		});
+	next();
+};
 
 const {
 	signup,
@@ -9,11 +24,13 @@ const {
 	confirmationPost,
 } = require("../controllers/User");
 
-const { savePatreons } = require("../controllers/patreonSubs");
+const { getData } = require("../controllers/getData");
+
+const { savePatreons } = require("../controllers/allPatrons");
 const {
 	loginButtonClicked,
 	handleOAuthRedirectRequest,
-} = require("../controllers/patreonUserData");
+} = require("../controllers/linkPatreon");
 
 router.post(
 	"/signup",
@@ -38,16 +55,17 @@ router.post(
 
 router.get("/signout", signout);
 
-//Token
 router.get("/confirmation", confirmationPost);
 //router.post("/resend", resendTokenPost);
 
 router.get("/getPatrons", savePatreons);
 
-router.get("/patreon-link", loginButtonClicked);
+router.get("/getData", verifyJWT, getData);
+
+router.get("/patreon-link", verifyJWT, loginButtonClicked);
 
 router.get("/oauth/redirect", handleOAuthRedirectRequest);
 
-router.get("/getTier", (req, res) => res.json(req.app.locals.tier));
+router.get("/getTier", verifyJWT, (req, res) => res.json(req.app.locals.tier));
 
 module.exports = router;
