@@ -3,7 +3,7 @@ import { isAuthenticated, signout } from "../../auth";
 import { Link } from "react-router-dom";
 
 const linkpatreon = () => {
-	fetch(`http://localhost:2020/patreon-link`, {
+	fetch(`${process.env.REACT_APP_API_URL}/patreon-link`, {
 		method: "GET",
 		headers: { "x-access-token": isAuthenticated().token },
 	})
@@ -14,7 +14,7 @@ const linkpatreon = () => {
 
 const Welcome = ({ history }) => {
 	const unlink = () => {
-		fetch(`http://localhost:2020/unlink`, {
+		fetch(`${process.env.REACT_APP_API_URL}/unlink`, {
 			method: "GET",
 			headers: { "x-access-token": isAuthenticated().token },
 		}).then(r => getData());
@@ -22,7 +22,7 @@ const Welcome = ({ history }) => {
 
 	const getData = () => {
 		if (isAuthenticated())
-			fetch(`http://localhost:2020/getData`, {
+			fetch(`${process.env.REACT_APP_API_URL}/getData`, {
 				method: "GET",
 				headers: { "x-access-token": isAuthenticated().token },
 			})
@@ -46,7 +46,7 @@ const Welcome = ({ history }) => {
 			{isAuthenticated() ? (
 				<>
 					<h2>Welcome {isAuthenticated().user.name}!</h2>
-
+					{data.error ? <h5>{data.error}</h5> : ""}
 					<div
 						style={{
 							margin: "40px",

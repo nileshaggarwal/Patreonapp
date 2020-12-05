@@ -56,8 +56,6 @@ router.post(
 	signin
 );
 
-router.get("/signout", signout);
-
 router.get("/confirmation", confirmationPost);
 //router.post("/resend", resendTokenPost);
 

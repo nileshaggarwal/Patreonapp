@@ -48,7 +48,7 @@ class Signin extends Component {
 
 	render() {
 		return (
-			<>
+			<div style={{ textAlign: "center" }}>
 				{this.loadingMessage()}
 				{this.errorMessage()}
 				<label htmlFor="email-address">Email</label>
@@ -69,7 +69,7 @@ class Signin extends Component {
 				<br />
 				<input onClick={this.onSubmitSignIn} type="submit" value="Sign in" />
 				{this.performRedirect()}
-			</>
+			</div>
 		);
 	}
 }
