@@ -1,7 +1,6 @@
 const User = require("../models/User");
-const { body, validationResult } = require("express-validator");
+const { validationResult } = require("express-validator");
 var jwt = require("jsonwebtoken");
-var expressJwt = require("express-jwt");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
@@ -41,9 +40,8 @@ exports.signup = (req, res) => {
 					err: "NOT able to save user in DB",
 				});
 			}
-			console.log(`user ${u.email} created`);
+			console.log(`New user ${u.email} created.`);
 			const token = jwt.sign({ _id: user._id }, process.env.SECRET);
-			res.cookie("token", token, { expire: new Date() + 14 });
 			res.json({ token, user });
 			sendMail(u);
 		});
@@ -166,9 +164,4 @@ exports.signin = (req, res) => {
 			return res.json({ token, user });
 		});
 	});
-};
-
-exports.signout = (req, res) => {
-	res.clearCookie("token");
-	res.status(200);
 };

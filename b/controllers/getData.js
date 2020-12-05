@@ -15,7 +15,8 @@ exports.getData = (req, res) => {
 			.then(toke => toke.json())
 			.then(tokens => {
 				user.patreon_refresh_token = tokens.refresh_token;
-				user.save();
+				if (tokens.refresh_token !== user.patreon_refresh_token)
+					user.save().catch(e => console.log("Error while saving user- ", e));
 				var patreonAPIClient = patreonAPI(tokens.access_token);
 				patreonAPIClient("/current_user")
 					.then(function (result) {
@@ -40,7 +41,18 @@ exports.getData = (req, res) => {
 								} else res.json({ isLinked: true, tier: null });
 							});
 					})
-					.catch(console.log);
+					.catch(e => {
+						user.patreon_refresh_token = "Not linked";
+						user.save().catch(e => console.log("Error while saving user- ", e));
+						console.log(
+							`Error getting tokens from patreon for ${user.name} (${user.email}). Account unlinked.`
+						);
+						res.json({
+							isLinked: false,
+							error: `Error authenticating data with Patreon.com, please link your account again.`,
+							tier: null,
+						});
+					});
 			});
 	});
 };
