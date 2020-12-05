@@ -14,9 +14,13 @@ exports.getData = (req, res) => {
 		)
 			.then(toke => toke.json())
 			.then(tokens => {
-				user.patreon_refresh_token = tokens.refresh_token;
-				if (tokens.refresh_token !== user.patreon_refresh_token)
+				if (
+					tokens.refresh_token !== user.patreon_refresh_token &&
+					tokens.refresh_token != undefined
+				) {
+					user.patreon_refresh_token = tokens.refresh_token;
 					user.save().catch(e => console.log("Error while saving user- ", e));
+				}
 				var patreonAPIClient = patreonAPI(tokens.access_token);
 				patreonAPIClient("/current_user")
 					.then(function (result) {
