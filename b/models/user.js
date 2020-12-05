@@ -30,10 +30,6 @@ const userSchema = new mongoose.Schema(
 			data: Buffer,
 			contentType: String,
 		},
-		patreonTier: {
-			type: Number,
-			default: 0,
-		},
 		patreon_refresh_token: {
 			type: String,
 			required: true,

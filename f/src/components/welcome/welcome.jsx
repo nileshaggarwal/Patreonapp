@@ -13,10 +13,14 @@ const linkpatreon = () => {
 };
 
 const Welcome = ({ history }) => {
-	const [gettingData, setGettingData] = useState(true);
-	const [data, setData] = useState({});
+	const unlink = () => {
+		fetch(`http://localhost:2020/unlink`, {
+			method: "GET",
+			headers: { "x-access-token": isAuthenticated().token },
+		}).then(r => getData());
+	};
 
-	useEffect(() => {
+	const getData = () => {
 		if (isAuthenticated())
 			fetch(`http://localhost:2020/getData`, {
 				method: "GET",
@@ -28,45 +32,74 @@ const Welcome = ({ history }) => {
 					setGettingData(false);
 				})
 				.catch(console.log);
+	};
+
+	const [gettingData, setGettingData] = useState(true);
+	const [data, setData] = useState({});
+
+	useEffect(() => {
+		getData();
 	}, []);
 
 	return (
-		<>
+		<div style={{ textAlign: "center" }}>
 			{isAuthenticated() ? (
 				<>
-					<h2>logged in as {isAuthenticated().user.name}</h2>
+					<h2>Welcome {isAuthenticated().user.name}!</h2>
 
-					<div style={{ margin: "40px", border: "5px solid red" }}>
+					<div
+						style={{
+							margin: "40px",
+							padding: "50px",
+							border: "5px solid red",
+						}}
+					>
 						{gettingData ? (
-							<h2>loadin</h2>
+							<img
+								style={{ width: "50px" }}
+								src="https://upload.wikimedia.org/wikipedia/commons/b/b9/Youtube_loading_symbol_1_(wobbly).gif"
+								alt="loading"
+							/>
 						) : (
 							<h2>
-								Your Tier: {data.tier === null ? "Not a Patron" : data.tier}
+								{data.tier === null
+									? data.isLinked === false
+										? "Patreon Account not Linked"
+										: "You're not a Patron. Subscribe now!"
+									: `Your Current Tier: ${data.tier}`}
 								{data.isLinked === false && (
-									<button onClick={linkpatreon}>Link Patreon</button>
+									<p>
+										<button onClick={linkpatreon}>Link Patreon</button>
+									</p>
 								)}
 							</h2>
 						)}
 					</div>
 
 					<button
+						style={{ margin: "20px" }}
 						onClick={() => {
 							signout(() => {
 								history.push("/signin");
 							});
 						}}
 					>
-						signout
+						Log Out
 					</button>
+					{data.isLinked && (
+						<button style={{ margin: "20px" }} onClick={unlink}>
+							Unlink Patreon Account
+						</button>
+					)}
 				</>
 			) : (
 				<>
-					<h3>not logged in</h3>
+					<h3>Not logged in.</h3>
 					<Link to="/signin">Signin</Link>or
 					<Link to="/signup">Signup</Link>
 				</>
 			)}
-		</>
+		</div>
 	);
 };
 

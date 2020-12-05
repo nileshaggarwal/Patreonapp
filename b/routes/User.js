@@ -27,6 +27,9 @@ const {
 const { getData } = require("../controllers/getData");
 
 const { savePatreons } = require("../controllers/allPatrons");
+
+const { unlink } = require("../controllers/unlink");
+
 const {
 	loginButtonClicked,
 	handleOAuthRedirectRequest,
@@ -67,5 +70,7 @@ router.get("/patreon-link", verifyJWT, loginButtonClicked);
 router.get("/oauth/redirect", handleOAuthRedirectRequest);
 
 router.get("/getTier", verifyJWT, (req, res) => res.json(req.app.locals.tier));
+
+router.get("/unlink", verifyJWT, unlink);
 
 module.exports = router;
