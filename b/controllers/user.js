@@ -1,4 +1,4 @@
-const User = require("../models/User");
+const User = require("../models/user");
 const { validationResult } = require("express-validator");
 var jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
@@ -50,7 +50,7 @@ exports.signup = (req, res) => {
 	});
 };
 
-const sendMail = user => {
+const sendMail = (user) => {
 	var mailOptions = {
 		from: "shreyxs@gmail.com",
 		to: user.email,
@@ -72,7 +72,7 @@ const sendMail = user => {
 	});
 };
 
-const createToken = userID => {
+const createToken = (userID) => {
 	const tokenS = new TokenS({
 		userId: userID,
 		token: crypto.randomBytes(16).toString("hex"),

@@ -1,7 +1,7 @@
 var url = require("url");
 var patreon = require("patreon");
 var patreonOAuth = patreon.oauth;
-const User = require("../models/User");
+const User = require("../models/user");
 
 var patreonOAuthClient = patreonOAuth(
 	process.env.CLIENT_ID,

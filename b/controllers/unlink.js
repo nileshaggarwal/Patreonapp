@@ -1,4 +1,4 @@
-const User = require("../models/User");
+const User = require("../models/user");
 
 exports.unlink = (req, res) => {
 	User.findOne({ _id: req.userID }, (err, user) => {
