@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { check } = require("express-validator");
 var jwt = require("jsonwebtoken");
-const User = require("../models/user");
+const User = require("../models/User");
 
 const verifyJWT = (req, res, next) => {
 	const token = req.headers["x-access-token"];
@@ -14,15 +14,7 @@ const verifyJWT = (req, res, next) => {
 					error: "Not authenticated",
 				});
 				return;
-			} else
-				User.findOne({ _id: decoded._id }, (err, user) => {
-					if (err || !user) {
-						res.json({
-							error: "Failed to authenticate token.",
-						});
-						return;
-					} else req.userID = decoded._id;
-				});
+			} else req.userID = decoded._id;
 			next();
 		});
 };
