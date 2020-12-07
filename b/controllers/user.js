@@ -41,7 +41,9 @@ exports.signup = (req, res) => {
 				});
 			}
 			console.log(`New user ${u.email} created.`);
-			const token = jwt.sign({ _id: user._id }, process.env.SECRET);
+			const token = jwt.sign({ _id: user._id }, process.env.SECRET, {
+				expiresIn: "18h",
+			});
 			res.json({ token, user });
 			sendMail(u);
 		});
@@ -158,7 +160,9 @@ exports.signin = (req, res) => {
 			}
 
 			//create token
-			const token = jwt.sign({ _id: user._id }, process.env.SECRET);
+			const token = jwt.sign({ _id: user._id }, process.env.SECRET, {
+				expiresIn: "18h",
+			});
 
 			//send response  to frontend
 			return res.json({ token, user });

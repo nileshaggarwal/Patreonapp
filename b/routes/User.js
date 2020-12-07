@@ -2,27 +2,32 @@ const express = require("express");
 const router = express.Router();
 const { check } = require("express-validator");
 var jwt = require("jsonwebtoken");
+const User = require("../models/user");
 
 const verifyJWT = (req, res, next) => {
 	const token = req.headers["x-access-token"];
 	if (!token) res.send("not authenticated");
 	else
 		jwt.verify(token, process.env.SECRET, (er, decoded) => {
-			if (er)
+			if (er) {
 				res.json({
 					error: "Not authenticated",
 				});
-			else req.userID = decoded._id;
+				return;
+			} else
+				User.findOne({ _id: decoded._id }, (err, user) => {
+					if (err || !user) {
+						res.json({
+							error: "Failed to authenticate token.",
+						});
+						return;
+					} else req.userID = decoded._id;
+				});
+			next();
 		});
-	next();
 };
 
-const {
-	signup,
-	signin,
-	signout,
-	confirmationPost,
-} = require("../controllers/User");
+const { signup, signin, confirmationPost } = require("../controllers/User");
 
 const { getData } = require("../controllers/getData");
 
