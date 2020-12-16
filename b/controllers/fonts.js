@@ -1,6 +1,6 @@
 const upload = require("./fontsMiddleware");
 
-const uploadFiles = async (req, res) => {
+exports.uploadFiles = async (req, res) => {
 	try {
 		await upload(req, res);
 
@@ -17,10 +17,4 @@ const uploadFiles = async (req, res) => {
 		}
 		return res.send(`Error when trying upload many files: ${error}`);
 	}
-};
-
-exports.addLogos = (req, res) => {};
-
-module.exports = {
-	uploadFiles: uploadFiles,
 };

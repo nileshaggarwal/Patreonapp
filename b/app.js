@@ -11,6 +11,7 @@ var session = require("express-session");
 //My routes
 const userRoutes = require("./routes/User");
 const fileRoutes = require("./routes/fonts");
+const addRoutes = require("./routes/add");
 
 mongoose
 	.connect(process.env.DATABASE, {
@@ -39,6 +40,7 @@ app.use(
 //My Routes
 app.use("/", userRoutes);
 app.use("/", fileRoutes);
+app.use("/", addRoutes);
 
 //Port
 const port = process.env.PORT || 2020;

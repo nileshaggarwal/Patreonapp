@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { uploadController } = require("../controllers/fonts");
+const { uploadFiles } = require("../controllers/fonts");
 const path = require("path");
 const { createCategory, addLogos } = require("../controllers/category");
 
@@ -9,8 +9,8 @@ const home = (req, res) => {
 };
 
 router.post("/category", createCategory);
-router.post("/logos", addLogos);
+
 router.get("/files", home);
-router.post("/upload", uploadController.uploadFiles);
+router.post("/upload", uploadFiles);
 
 module.exports = router;
